@@ -1,0 +1,233 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCG HUB</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f7f8fa;
+  color: #20242c;
+}
+
+header {
+  background: white;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo span { color: #6366f1; }
+
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 18px;
+}
+
+h1 { font-size: 27px; margin-bottom: 5px; }
+
+.subtitle { color: #777; font-size: 14px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.stat, .panel {
+  background: white;
+  border: 1px solid #e8e9ed;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.stat strong {
+  display: block;
+  font-size: 27px;
+  margin-top: 8px;
+}
+
+.stat small { color: #777; }
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+input, select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  font-size: 14px;
+}
+
+input { flex: 1; min-width: 180px; }
+
+h2 { font-size: 19px; }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e8e9ed;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.art {
+  height: 175px;
+  display: grid;
+  place-items: center;
+  background: #f0efff;
+  color: #6366f1;
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.card-info { padding: 13px; }
+
+.card-info h3 {
+  font-size: 15px;
+  margin: 0 0 7px;
+}
+
+.card-info p {
+  font-size: 12px;
+  color: #777;
+  margin: 0 0 10px;
+}
+
+.rarity {
+  font-size: 11px;
+  background: #f0efff;
+  color: #5550c9;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+
+footer {
+  text-align: center;
+  color: #999;
+  font-size: 12px;
+  padding: 35px;
+}
+
+@media (min-width: 700px) {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+  .cards { grid-template-columns: repeat(4, 1fr); }
+  .art { height: 230px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">TCG <span>HUB.</span></div>
+</header>
+
+<main>
+  <h1>Card Database</h1>
+  <p class="subtitle">Explore your original trading card universe.</p>
+
+  <section class="stats">
+    <div class="stat">
+      <small>Total Cards</small>
+      <strong id="total">4</strong>
+    </div>
+    <div class="stat">
+      <small>Card Sets</small>
+      <strong>1</strong>
+    </div>
+    <div class="stat">
+      <small>Card Types</small>
+      <strong>3</strong>
+    </div>
+    <div class="stat">
+      <small>Rarities</small>
+      <strong>4</strong>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>All Cards</h2>
+
+    <div class="toolbar">
+      <input id="search" placeholder="Search card name or ID...">
+      <select id="rarity">
+        <option value="">All Rarities</option>
+        <option>Common</option>
+        <option>Rare</option>
+        <option>Super Rare</option>
+        <option>Secret Rare</option>
+      </select>
+    </div>
+
+    <div class="cards" id="cards"></div>
+  </section>
+</main>
+
+<footer>TCG HUB · Original Trading Card Database</footer>
+
+<script>
+const cardDatabase = [
+  {id:"TCG-001", name:"Flame Warrior", type:"Character", rarity:"Common", power:3000, icon:"🔥"},
+  {id:"TCG-002", name:"Shadow Knight", type:"Character", rarity:"Rare", power:5000, icon:"⚔️"},
+  {id:"TCG-003", name:"Dragon Emperor", type:"Character", rarity:"Super Rare", power:8000, icon:"🐉"},
+  {id:"TCG-004", name:"Celestial Guardian", type:"Unit", rarity:"Secret Rare", power:10000, icon:"✨"}
+];
+
+const cards = document.getElementById("cards");
+const search = document.getElementById("search");
+const rarity = document.getElementById("rarity");
+
+function renderCards() {
+  const query = search.value.toLowerCase();
+  const selected = rarity.value;
+
+  const filtered = cardDatabase.filter(card =>
+    (card.name.toLowerCase().includes(query) ||
+     card.id.toLowerCase().includes(query)) &&
+    (!selected || card.rarity === selected)
+  );
+
+  cards.innerHTML = filtered.map(card => `
+    <article class="card">
+      <div class="art">${card.icon}</div>
+      <div class="card-info">
+        <h3>${card.name}</h3>
+        <p>${card.id} · ${card.type}</p>
+        <p>Power: ${card.power.toLocaleString()}</p>
+        <span class="rarity">${card.rarity}</span>
+      </div>
+    </article>
+  `).join("") || "<p>No cards found.</p>";
+}
+
+search.addEventListener("input", renderCards);
+rarity.addEventListener("change", renderCards);
+
+renderCards();
+</script>
+
+</body>
+</html>
